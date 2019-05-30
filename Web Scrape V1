@@ -1,0 +1,24 @@
+
+import requests
+from bs4 import BeautifulSoup
+import csv
+from datetime import datetime
+
+
+url = 'https://eve-marketdata.com/price_check.php?type_name_header=vexor'
+response = requests.get(url)
+
+soup = BeautifulSoup(response.text, 'html.parser')
+
+
+TABLE = soup.findAll('tr', attrs={'class': 'r1'})
+
+TEXT = soup.get_text()
+
+text = TEXT.strip()
+
+with open('index.csv', 'a') as csv_file:
+ writer = csv.writer(csv_file)
+ writer.writerow([text])
+
+
