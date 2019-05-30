@@ -10,15 +10,28 @@ response = requests.get(url)
 
 soup = BeautifulSoup(response.text, 'html.parser')
 
+HEADERS = soup.findAll('th')
+# TABLE = soup.findAll('tr', attrs={'class': 'r1'})
+# TABLE = soup.findAll('tr', {'class': 'r1'})
+TOPTABLE = soup.table
+TABLE = soup.tbody
 
-TABLE = soup.findAll('tr', attrs={'class': 'r1'})
+AANTAL = soup.find_all('td', {'class': 'qty'})
+PRIJS = soup.find_all('td', {'class': 'isk'})
+Update_Time = soup.find_all('td', {'class': 'update_time'})
 
-TEXT = soup.get_text()
 
-text = TEXT.strip()
+# print(soup.prettify())
+print(LOCATIE)
 
-with open('index.csv', 'a') as csv_file:
- writer = csv.writer(csv_file)
- writer.writerow([text])
+
+
+#TEXT = soup.get_text()
+
+#text = TEXT.strip()
+
+#with open('index.csv', 'a') as csv_file:
+ #writer = csv.writer(csv_file)
+ #writer.writerow([text])
 
 
