@@ -1,37 +1,89 @@
-
 import requests
 from bs4 import BeautifulSoup
-import csv
-from datetime import datetime
+import pandas as pd
 
+# Live Seller
 
-url = 'https://eve-marketdata.com/price_check.php?type_name_header=vexor'
+url = 'https://eve-marketdata.com/price_check.php?type_id=626'
 response = requests.get(url)
 
 soup = BeautifulSoup(response.text, 'html.parser')
 
-HEADERS = soup.findAll('th')
-# TABLE = soup.findAll('tr', attrs={'class': 'r1'})
-# TABLE = soup.findAll('tr', {'class': 'r1'})
-TOPTABLE = soup.table
-TABLE = soup.tbody
+results = soup.find_all('tr', attrs={'class': 'r1'})
 
-AANTAL = soup.find_all('td', {'class': 'qty'})
-PRIJS = soup.find_all('td', {'class': 'isk'})
-Update_Time = soup.find_all('td', {'class': 'update_time'})
+DATA = []
+for results in results:
+    QTY = results.contents[3].text.strip()
+    LOCA = results.contents[1].text.strip()
+    ISK = results.contents[5].text.strip()
+    TIME = results.contents[7].text.strip()
+    DATA.append((QTY, LOCA, ISK, TIME))
 
+df = pd.DataFrame(DATA, columns=['QTY', 'LOCA', 'ISK', 'TIME'])
 
-# print(soup.prettify())
-print(LOCATIE)
+new = df['LOCA'].str.split('\n', expand=True)
 
+df['SEC'] = new[0]
+df['Region'] = new[1]
+df['System'] = new[2]
+df['System'] = df['System'].str.replace(r'-', '')
 
+df.drop(columns=["LOCA"], inplace=True)
 
-#TEXT = soup.get_text()
+df['Order'] = 'SELL'
 
-#text = TEXT.strip()
+df.head()
 
-#with open('index.csv', 'a') as csv_file:
- #writer = csv.writer(csv_file)
- #writer.writerow([text])
+# Live Buyers
 
+urlbuyer = 'https://eve-marketdata.com/price_check.php?type_id=626&region_id=&solarsystem_id=&type=buy'
+response2 = requests.get(urlbuyer)
 
+soup2 = BeautifulSoup(response2.text, 'html.parser')
+
+results2 = soup2.find_all('tr', attrs={'class': 'r1'})
+
+DATA2 = []
+for results2 in results2:
+    QTY = results2.contents[3].text.strip()
+    LOCA = results2.contents[1].text.strip()
+    ISK = results2.contents[5].text.strip()
+    TIME = results2.contents[9].text.strip()
+    DATA2.append((QTY, LOCA, ISK, TIME))
+
+df2 = pd.DataFrame(DATA2, columns=['QTY', 'LOCA', 'ISK', 'TIME'])
+
+new2 = df2['LOCA'].str.split('\n', expand=True)
+
+df2['SEC'] = new[0]
+df2['Region'] = new[1]
+df2['System'] = new[2]
+df2['System'] = df2['System'].str.replace(r'-', '')
+
+df2.drop(columns=["LOCA"], inplace=True)
+
+df2['Order'] = 'BUY'
+
+df2.head()
+
+#History sales of vexor
+
+urlH = 'https://eve-marketdata.com/price_check.php?type_id=626&region_id=10000054&solarsystem_id=&type=history'
+
+responseH = requests.get(urlH)
+
+soupH = BeautifulSoup(responseH.text, 'lxml')
+
+table = soupH.findAll('table')[2]
+rows = table.find_all('tr')
+
+DATA3 = []
+
+for row in rows:
+    cols = row.find_all('td')
+    cols =[x.text.strip() for x in cols]
+    DATA3.append(cols)
+
+df3 = pd.DataFrame(DATA3, columns=['Date','Number Of Orders', 'Quantity Sold', 'Lowest Buy Price', 'Highest Sell Price', 'Daily Average Price'])
+
+DF3 = df3[1:]
