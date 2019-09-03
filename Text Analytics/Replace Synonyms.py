@@ -32,5 +32,5 @@ df1 = pd.read_csv("C:\\Users\\XXX\\XXXXX\\XXX XXXX X\\XXX\\text1.csv")
 # =============================================================================
 
 df1["TEXT"] = df1["TEXT"].progress_apply(lambda s: replace_from_dict(s, syno_dict))
-
+#
 
