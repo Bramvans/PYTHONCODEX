@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 # =============================================================================
 # Data Frame Summary
@@ -41,4 +42,26 @@ DF1.decribe()
 # shows data types of the columns in the data set
 
 DF1.dtypes
+
+# =============================================================================
+# Data Frame .shape
+# =============================================================================
+# number of rows and columns
+
+DF1.shape
+
+# =============================================================================
+# Data Frame .value_counts()
+# =============================================================================
+# counts the occurrence of an value in an column
+
+DF1["Col 1"].value_counts()
+
+# =============================================================================
+# Data Frame .compare_values()
+# =============================================================================
+# compares values in a column between 2 seperate data sets
+
+compare_values(DF1["Col 1"], DF2["Col 2"])
+
 
